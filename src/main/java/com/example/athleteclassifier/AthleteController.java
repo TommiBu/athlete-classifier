@@ -32,7 +32,22 @@ public class AthleteController {
         repo.findAll().stream()
                 .filter(a -> a.getAthleteId().equals(id))
                 .findFirst()
-                .ifPresent(a -> model.addAttribute("athlete", a));
+                .ifPresent(a -> {
+                    model.addAttribute("athlete", a);
+                    String desc = switch (a.getQuadrant()) {
+                        case "Q1" -> "Vyšší PP/SMM · užší rozptyl";
+                        case "Q2" -> "Vyšší PP/SMM · širší rozptyl";
+                        case "Q3" -> "Nižší PP/SMM · užší rozptyl";
+                        default   -> "Nižší PP/SMM · širší rozptyl";
+                    };
+                    String color = switch (a.getQuadrant()) {
+                        case "Q1" -> "linear-gradient(135deg,#1D9E75,#1D9E75BB)";
+                        case "Q2" -> "linear-gradient(135deg,#EF9F27,#EF9F27BB)";
+                        case "Q3" -> "linear-gradient(135deg,#378ADD,#378ADDBB)";
+                        default   -> "linear-gradient(135deg,#E24B4A,#E24B4ABB)";
+                    };
+                    model.addAttribute("quadrantDesc", desc);
+                    model.addAttribute("hdrColor", color);
+                });
         return "detail";
     }
-}
