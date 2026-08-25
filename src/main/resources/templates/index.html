@@ -1,63 +1,239 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <title>Detail hráče</title>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Typologická analýza 2×2 + TTP</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #F0F2F5; margin: 0; color: #333; }
-        .hdr { background: linear-gradient(135deg,#1F4E79,#2E75B6); color: white; padding: 20px 28px; }
-        .hdr h1 { margin: 0 0 4px; font-size: 20px; }
-        .content { max-width: 700px; margin: 24px auto; padding: 0 16px; }
-        .card { background: white; border-radius: 12px; padding: 24px; border: 1px solid #DDD; margin-bottom: 16px; }
-        .profil { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
-        .section { font-size: 12px; font-weight: 700; color: #1F4E79; margin: 16px 0 8px;
-            border-left: 4px solid #2E75B6; padding-left: 8px; }
-        .row { display: flex; justify-content: space-between; padding: 6px 0;
-            border-bottom: 1px solid #F5F5F5; font-size: 13px; }
-        .label { color: #888; }
-        .val { font-weight: 600; }
-        .warn { color: #E24B4A; }
-        .back { display: inline-block; margin-bottom: 16px; color: #2E75B6;
-            text-decoration: none; font-size: 13px; }
-        .back:hover { text-decoration: underline; }
+        *{box-sizing:border-box;} body{font-family:Arial,sans-serif;background:#F0F2F5;margin:0;color:#333;}
+        .hdr{background:linear-gradient(135deg,#1F4E79,#2E75B6);color:white;padding:20px 28px;}
+        .hdr h1{margin:0 0 4px;font-size:20px;} .hdr p{margin:0;opacity:.85;font-size:11px;}
+        .content{max-width:1280px;margin:0 auto;padding:16px;}
+        .st{font-size:13px;font-weight:700;color:#1F4E79;margin:18px 0 8px;border-left:4px solid #2E75B6;padding-left:8px;}
+        .quad-block{border-radius:12px;padding:14px;margin-bottom:14px;border:2px solid;}
+        .quad-title{font-weight:700;font-size:14px;margin-bottom:3px;}
+        .quad-desc{font-size:11px;color:#666;margin-bottom:10px;font-style:italic;}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px;}
+        .card-link{text-decoration:none;}
+        .mini-card{background:white;border-radius:10px;padding:11px 12px;cursor:pointer;transition:box-shadow 0.15s;border-width:1.5px;border-style:solid;}
+        .mini-card:hover{box-shadow:0 3px 12px rgba(0,0,0,0.15);}
+        .card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+        .card-id{font-weight:700;font-size:12px;}
+        .profil-badge{color:white;font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;}
+        .badges{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:5px;}
+        .badge{color:white;font-size:9px;padding:1px 6px;border-radius:8px;}
+        .bar-row{margin-bottom:7px;}
+        .bar-label{display:flex;justify-content:space-between;align-items:center;font-size:9px;margin-bottom:2px;}
+        .bar-bg{background:#EEE;border-radius:3px;height:6px;}
+        .bar-fill{height:6px;border-radius:3px;opacity:0.85;}
+        .params{display:grid;grid-template-columns:1fr 1fr;gap:2px;font-size:11px;color:#555;}
+        .param-label{color:#888;font-size:10px;}
+        .param-val{font-weight:600;}
+        .card-footer{margin-top:7px;text-align:center;font-size:9px;color:#2E75B6;}
     </style>
 </head>
 <body>
 <div class="hdr">
-    <h1>Detail hráče</h1>
+    <h1>Typologická analýza 2×2 + TTP</h1>
+    <p>Osa X: pp/smm · Osa Y: FI/Mean · Klikni na kartičku → osobní karta</p>
 </div>
 <div class="content">
-    <a class="back" href="/">← Zpět na přehled</a>
-    <div class="card" th:if="${athlete}">
-        <div class="profil" th:style="'color:' + (${athlete.quadrant == 'Q1'} ? '#1D9E75' :
-      ${athlete.quadrant == 'Q2'} ? '#EF9F27' :
-      ${athlete.quadrant == 'Q3'} ? '#378ADD' : '#E24B4A')"
-             th:text="${athlete.profil}"></div>
-        <div style="font-size:12px;color:#888;margin-bottom:16px;" th:text="${athlete.athleteId}"></div>
 
-        <div class="section">Wingate — výkonové parametry</div>
-        <div class="row"><span class="label">Peak Power</span><span class="val" th:text="${#numbers.formatDecimal(athlete.peakPowerW,1,0)} + ' W'"></span></div>
-        <div class="row"><span class="label">Mean Power</span><span class="val" th:text="${#numbers.formatDecimal(athlete.meanPowerW,1,0)} + ' W'"></span></div>
-        <div class="row"><span class="label">Fatigue Index</span><span class="val" th:text="${#numbers.formatDecimal(athlete.fatigueIndex,1,1)} + ' %'"></span></div>
-        <div class="row"><span class="label">Time to Peak</span><span class="val" th:text="${#numbers.formatDecimal(athlete.timeToPeakS,1,2)} + ' s'"></span></div>
-
-        <div class="section">Klasifikace</div>
-        <div class="row"><span class="label">pp/smm</span><span class="val" th:text="${#numbers.formatDecimal(athlete.ppPerSmm,1,2)} + ' W/kg'"></span></div>
-        <div class="row"><span class="label">FI/Mean</span><span class="val" th:text="${#numbers.formatDecimal(athlete.fiMeanRatio,1,2)}"></span></div>
-        <div class="row"><span class="label">Kvadrant</span><span class="val" th:text="${athlete.quadrant}"></span></div>
-        <div class="row"><span class="label">Profil</span><span class="val" th:text="${athlete.profil}"></span></div>
-
-        <div class="section">BIA — tělesné složení</div>
-        <div class="row"><span class="label">SMM</span><span class="val" th:text="${#numbers.formatDecimal(athlete.smmKg,1,1)} + ' kg'"></span></div>
-        <div class="row"><span class="label">Fázový úhel</span>
-            <span th:class="${athlete.pha < 6.5} ? 'val warn' : 'val'"
-                  th:text="${#numbers.formatDecimal(athlete.pha,1,1)} + '°'"></span>
+    <!-- Q1 -->
+    <div class="quad-block" style="background:#E2F0D9;border-color:#375623;">
+        <div class="quad-title" style="color:#1E3A1F;">Q1 — Vyšší PP/SMM · užší rozptyl
+            <span style="font-size:11px;font-weight:400;margin-left:6px;" th:text="'n=' + ${q1.size()}"></span>
         </div>
-        <div class="row"><span class="label">ECW/TBW</span>
-            <span th:class="${athlete.ecw / athlete.tbw >= 0.380} ? 'val warn' : 'val'"
-                  th:text="${#numbers.formatDecimal(athlete.ecw / athlete.tbw,1,3)}"></span>
+        <div class="quad-desc">Nadprůměrný poměr výkonu vůči svalové hmotě s konzistentním průběhem testu.</div>
+        <div class="grid">
+            <a class="card-link" th:each="a : ${q1}" th:href="@{/athlete/{id}(id=${a.athleteId})}">
+                <div class="mini-card" style="border-color:#375623;">
+                    <div class="card-header">
+                        <span class="card-id" style="color:#1E3A1F;" th:text="${a.athleteId}"></span>
+                        <span class="profil-badge" style="background:#1D9E75;" th:text="${a.profil}"></span>
+                    </div>
+                    <div class="badges">
+                        <span class="badge" style="background:#2E75B6;" th:if="${a.profil.endsWith('R')}">⚡TTP</span>
+                        <span class="badge" style="background:#EF9F27;" th:if="${a.pha < 6.5}">⚠PhA</span>
+                        <span class="badge" style="background:#A32D2D;" th:if="${a.ecw / a.tbw >= 0.380}">⚠Edema</span>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span style="color:#888;">pp/smm</span>
+                            <span style="font-weight:600;color:#375623;font-size:10px;" th:text="${#numbers.formatDecimal(a.ppPerSmm,1,1)} + ' W/kg'"></span>
+                            <span style="color:#AAA;">osa X</span>
+                        </div>
+                        <div class="bar-bg"><div class="bar-fill" style="background:#375623;" th:style="'background:#375623;width:' + ${#numbers.formatDecimal(a.ppPerSmm / 45 * 100, 1, 0)} + '%;height:6px;border-radius:3px;opacity:0.85;'"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span style="color:#888;">FI/Mean</span>
+                            <span style="font-weight:600;font-size:10px;" th:style="${a.fiMeanRatio > 74} ? 'color:#A32D2D;' : 'color:#375623;'" th:text="${#numbers.formatDecimal(a.fiMeanRatio,1,1)}"></span>
+                            <span style="color:#AAA;">osa Y</span>
+                        </div>
+                        <div class="bar-bg"><div class="bar-fill" th:style="'background:' + (${a.fiMeanRatio > 74} ? '#A32D2D' : '#375623') + ';width:' + ${#numbers.formatDecimal(a.fiMeanRatio / 110 * 100, 1, 0)} + '%;height:6px;border-radius:3px;opacity:0.85;'"></div></div>
+                    </div>
+                    <div class="params">
+                        <span class="param-label">SMM</span><span class="param-val" th:text="${#numbers.formatDecimal(a.smmKg,1,1)} + ' kg'"></span>
+                        <span class="param-label">PP</span><span class="param-val" th:text="${#numbers.formatDecimal(a.peakPowerW,1,0)} + ' W'"></span>
+                        <span class="param-label">FI</span><span class="param-val" th:text="${#numbers.formatDecimal(a.fatigueIndex,1,1)} + ' %'"></span>
+                        <span class="param-label">TTP</span><span class="param-val" th:text="${#numbers.formatDecimal(a.timeToPeakS,1,2)} + ' s'"></span>
+                        <span class="param-label">Mean</span><span class="param-val" th:text="${#numbers.formatDecimal(a.meanPowerW,1,0)} + ' W'"></span>
+                        <span class="param-label">PhA</span>
+                        <span class="param-val" th:style="${a.pha < 6.5} ? 'color:#A32D2D;' : 'color:#333;'" th:text="${#numbers.formatDecimal(a.pha,1,1)} + ' °'"></span>
+                    </div>
+                    <div class="card-footer">→ kompletní profil</div>
+                </div>
+            </a>
         </div>
     </div>
+
+    <!-- Q2 -->
+    <div class="quad-block" style="background:#FFF3CD;border-color:#854F0B;">
+        <div class="quad-title" style="color:#4A2D06;">Q2 — Vyšší PP/SMM · širší rozptyl
+            <span style="font-size:11px;font-weight:400;margin-left:6px;" th:text="'n=' + ${q2.size()}"></span>
+        </div>
+        <div class="quad-desc">Nadprůměrný poměr výkonu vůči svalové hmotě s výraznějším poklesem v průběhu testu.</div>
+        <div class="grid">
+            <a class="card-link" th:each="a : ${q2}" th:href="@{/athlete/{id}(id=${a.athleteId})}">
+                <div class="mini-card" style="border-color:#854F0B;">
+                    <div class="card-header">
+                        <span class="card-id" style="color:#4A2D06;" th:text="${a.athleteId}"></span>
+                        <span class="profil-badge" style="background:#EF9F27;" th:text="${a.profil}"></span>
+                    </div>
+                    <div class="badges">
+                        <span class="badge" style="background:#2E75B6;" th:if="${a.profil.endsWith('R')}">⚡TTP</span>
+                        <span class="badge" style="background:#EF9F27;" th:if="${a.pha < 6.5}">⚠PhA</span>
+                        <span class="badge" style="background:#A32D2D;" th:if="${a.ecw / a.tbw >= 0.380}">⚠Edema</span>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span style="color:#888;">pp/smm</span>
+                            <span style="font-weight:600;color:#375623;font-size:10px;" th:text="${#numbers.formatDecimal(a.ppPerSmm,1,1)} + ' W/kg'"></span>
+                            <span style="color:#AAA;">osa X</span>
+                        </div>
+                        <div class="bar-bg"><div class="bar-fill" th:style="'background:#375623;width:' + ${#numbers.formatDecimal(a.ppPerSmm / 45 * 100, 1, 0)} + '%;height:6px;border-radius:3px;opacity:0.85;'"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span style="color:#888;">FI/Mean</span>
+                            <span style="font-weight:600;font-size:10px;" th:style="${a.fiMeanRatio > 74} ? 'color:#A32D2D;' : 'color:#375623;'" th:text="${#numbers.formatDecimal(a.fiMeanRatio,1,1)}"></span>
+                            <span style="color:#AAA;">osa Y</span>
+                        </div>
+                        <div class="bar-bg"><div class="bar-fill" th:style="'background:' + (${a.fiMeanRatio > 74} ? '#A32D2D' : '#375623') + ';width:' + ${#numbers.formatDecimal(a.fiMeanRatio / 110 * 100, 1, 0)} + '%;height:6px;border-radius:3px;opacity:0.85;'"></div></div>
+                    </div>
+                    <div class="params">
+                        <span class="param-label">SMM</span><span class="param-val" th:text="${#numbers.formatDecimal(a.smmKg,1,1)} + ' kg'"></span>
+                        <span class="param-label">PP</span><span class="param-val" th:text="${#numbers.formatDecimal(a.peakPowerW,1,0)} + ' W'"></span>
+                        <span class="param-label">FI</span><span class="param-val" th:text="${#numbers.formatDecimal(a.fatigueIndex,1,1)} + ' %'"></span>
+                        <span class="param-label">TTP</span><span class="param-val" th:text="${#numbers.formatDecimal(a.timeToPeakS,1,2)} + ' s'"></span>
+                        <span class="param-label">Mean</span><span class="param-val" th:text="${#numbers.formatDecimal(a.meanPowerW,1,0)} + ' W'"></span>
+                        <span class="param-label">PhA</span>
+                        <span class="param-val" th:style="${a.pha < 6.5} ? 'color:#A32D2D;' : 'color:#333;'" th:text="${#numbers.formatDecimal(a.pha,1,1)} + ' °'"></span>
+                    </div>
+                    <div class="card-footer">→ kompletní profil</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="quad-block" style="background:#DEEAF1;border-color:#1F4E79;">
+        <div class="quad-title" style="color:#0D2A45;">Q3 — Nižší PP/SMM · užší rozptyl
+            <span style="font-size:11px;font-weight:400;margin-left:6px;" th:text="'n=' + ${q3.size()}"></span>
+        </div>
+        <div class="quad-desc">Podprůměrný poměr výkonu vůči svalové hmotě s konzistentním průběhem testu.</div>
+        <div class="grid">
+            <a class="card-link" th:each="a : ${q3}" th:href="@{/athlete/{id}(id=${a.athleteId})}">
+                <div class="mini-card" style="border-color:#1F4E79;">
+                    <div class="card-header">
+                        <span class="card-id" style="color:#0D2A45;" th:text="${a.athleteId}"></span>
+                        <span class="profil-badge" style="background:#378ADD;" th:text="${a.profil}"></span>
+                    </div>
+                    <div class="badges">
+                        <span class="badge" style="background:#2E75B6;" th:if="${a.profil.endsWith('R')}">⚡TTP</span>
+                        <span class="badge" style="background:#EF9F27;" th:if="${a.pha < 6.5}">⚠PhA</span>
+                        <span class="badge" style="background:#A32D2D;" th:if="${a.ecw / a.tbw >= 0.380}">⚠Edema</span>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span style="color:#888;">pp/smm</span>
+                            <span style="font-weight:600;color:#375623;font-size:10px;" th:text="${#numbers.formatDecimal(a.ppPerSmm,1,1)} + ' W/kg'"></span>
+                            <span style="color:#AAA;">osa X</span>
+                        </div>
+                        <div class="bar-bg"><div class="bar-fill" th:style="'background:#1F4E79;width:' + ${#numbers.formatDecimal(a.ppPerSmm / 45 * 100, 1, 0)} + '%;height:6px;border-radius:3px;opacity:0.85;'"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span style="color:#888;">FI/Mean</span>
+                            <span style="font-weight:600;font-size:10px;" th:style="${a.fiMeanRatio > 74} ? 'color:#A32D2D;' : 'color:#375623;'" th:text="${#numbers.formatDecimal(a.fiMeanRatio,1,1)}"></span>
+                            <span style="color:#AAA;">osa Y</span>
+                        </div>
+                        <div class="bar-bg"><div class="bar-fill" th:style="'background:' + (${a.fiMeanRatio > 74} ? '#A32D2D' : '#1F4E79') + ';width:' + ${#numbers.formatDecimal(a.fiMeanRatio / 110 * 100, 1, 0)} + '%;height:6px;border-radius:3px;opacity:0.85;'"></div></div>
+                    </div>
+                    <div class="params">
+                        <span class="param-label">SMM</span><span class="param-val" th:text="${#numbers.formatDecimal(a.smmKg,1,1)} + ' kg'"></span>
+                        <span class="param-label">PP</span><span class="param-val" th:text="${#numbers.formatDecimal(a.peakPowerW,1,0)} + ' W'"></span>
+                        <span class="param-label">FI</span><span class="param-val" th:text="${#numbers.formatDecimal(a.fatigueIndex,1,1)} + ' %'"></span>
+                        <span class="param-label">TTP</span><span class="param-val" th:text="${#numbers.formatDecimal(a.timeToPeakS,1,2)} + ' s'"></span>
+                        <span class="param-label">Mean</span><span class="param-val" th:text="${#numbers.formatDecimal(a.meanPowerW,1,0)} + ' W'"></span>
+                        <span class="param-label">PhA</span>
+                        <span class="param-val" th:style="${a.pha < 6.5} ? 'color:#A32D2D;' : 'color:#333;'" th:text="${#numbers.formatDecimal(a.pha,1,1)} + ' °'"></span>
+                    </div>
+                    <div class="card-footer">→ kompletní profil</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="quad-block" style="background:#FCE4D6;border-color:#A32D2D;">
+        <div class="quad-title" style="color:#5C1A1A;">Q4 — Nižší PP/SMM · širší rozptyl
+            <span style="font-size:11px;font-weight:400;margin-left:6px;" th:text="'n=' + ${q4.size()}"></span>
+        </div>
+        <div class="quad-desc">Podprůměrný poměr výkonu vůči svalové hmotě s výraznějším poklesem v průběhu testu.</div>
+        <div class="grid">
+            <a class="card-link" th:each="a : ${q4}" th:href="@{/athlete/{id}(id=${a.athleteId})}">
+                <div class="mini-card" style="border-color:#A32D2D;">
+                    <div class="card-header">
+                        <span class="card-id" style="color:#5C1A1A;" th:text="${a.athleteId}"></span>
+                        <span class="profil-badge" style="background:#E24B4A;" th:text="${a.profil}"></span>
+                    </div>
+                    <div class="badges">
+                        <span class="badge" style="background:#2E75B6;" th:if="${a.profil.endsWith('R')}">⚡TTP</span>
+                        <span class="badge" style="background:#EF9F27;" th:if="${a.pha < 6.5}">⚠PhA</span>
+                        <span class="badge" style="background:#A32D2D;" th:if="${a.ecw / a.tbw >= 0.380}">⚠Edema</span>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span style="color:#888;">pp/smm</span>
+                            <span style="font-weight:600;color:#375623;font-size:10px;" th:text="${#numbers.formatDecimal(a.ppPerSmm,1,1)} + ' W/kg'"></span>
+                            <span style="color:#AAA;">osa X</span>
+                        </div>
+                        <div class="bar-bg"><div class="bar-fill" th:style="'background:#A32D2D;width:' + ${#numbers.formatDecimal(a.ppPerSmm / 45 * 100, 1, 0)} + '%;height:6px;border-radius:3px;opacity:0.85;'"></div></div>
+                    </div>
+                    <div class="bar-row">
+                        <div class="bar-label">
+                            <span style="color:#888;">FI/Mean</span>
+                            <span style="font-weight:600;font-size:10px;" th:style="${a.fiMeanRatio > 74} ? 'color:#A32D2D;' : 'color:#375623;'" th:text="${#numbers.formatDecimal(a.fiMeanRatio,1,1)}"></span>
+                            <span style="color:#AAA;">osa Y</span>
+                        </div>
+                        <div class="bar-bg"><div class="bar-fill" th:style="'background:' + (${a.fiMeanRatio > 74} ? '#A32D2D' : '#375623') + ';width:' + ${#numbers.formatDecimal(a.fiMeanRatio / 110 * 100, 1, 0)} + '%;height:6px;border-radius:3px;opacity:0.85;'"></div></div>
+                    </div>
+                    <div class="params">
+                        <span class="param-label">SMM</span><span class="param-val" th:text="${#numbers.formatDecimal(a.smmKg,1,1)} + ' kg'"></span>
+                        <span class="param-label">PP</span><span class="param-val" th:text="${#numbers.formatDecimal(a.peakPowerW,1,0)} + ' W'"></span>
+                        <span class="param-label">FI</span><span class="param-val" th:text="${#numbers.formatDecimal(a.fatigueIndex,1,1)} + ' %'"></span>
+                        <span class="param-label">TTP</span><span class="param-val" th:text="${#numbers.formatDecimal(a.timeToPeakS,1,2)} + ' s'"></span>
+                        <span class="param-label">Mean</span><span class="param-val" th:text="${#numbers.formatDecimal(a.meanPowerW,1,0)} + ' W'"></span>
+                        <span class="param-label">PhA</span>
+                        <span class="param-val" th:style="${a.pha < 6.5} ? 'color:#A32D2D;' : 'color:#333;'" th:text="${#numbers.formatDecimal(a.pha,1,1)} + ' °'"></span>
+                    </div>
+                    <div class="card-footer">→ kompletní profil</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>

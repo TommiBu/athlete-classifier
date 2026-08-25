@@ -51,3 +51,4 @@ public class AthleteController {
                 });
         return "detail";
     }
+}
