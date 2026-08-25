@@ -36,8 +36,9 @@
 
 <div class="hdr" th:style="'background:' + ${hdrColor}">
   <div>
-    <h1 th:text="${athlete.athleteId} + ' \u00a0'">
-      <span class="pb" th:text="${athlete.profil}"></span>
+    <h1>
+      <span th:text="${athlete.athleteId}"></span>
+      &nbsp;<span class="pb" th:text="${athlete.profil}"></span>
     </h1>
     <div style="font-size:12px;opacity:0.9;margin-top:4px;" th:text="${quadrantDesc}">
     </div>
